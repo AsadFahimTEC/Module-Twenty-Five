@@ -13,11 +13,11 @@ const createPost = async (data: Omit<Post, "id" | "createdAt" | "updatedAt" | "a
 }
 
 const getAllPost = async ({
-    search, tags
+    search, tags, isFeatured
 }: {
     search: string | undefined,
     tags: string[] | [],
-    isFeatured: boolean
+    isFeatured: boolean | undefined
 }) => {
     const andConditions: PostWhereInput[] = [];
 
