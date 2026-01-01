@@ -14,43 +14,51 @@ const createPost = async (data: Omit<Post, "id" | "createdAt" | "updatedAt" | "a
 
 const getAllPost = async ({
     search, tags
-} : { search: string | undefined,
-tags: string[] | []
+}: {
+    search: string | undefined,
+    tags: string[] | [],
+    isFeatured: boolean
 }) => {
-    const andConditions:PostWhereInput[] = [];
+    const andConditions: PostWhereInput[] = [];
 
-    if(search) {
+    if (search) {
         andConditions.push(
-             {
-                    OR: [
-                {
-                    title: {
-                        contains: search,
-                        mode: "insensitive"
+            {
+                OR: [
+                    {
+                        title: {
+                            contains: search,
+                            mode: "insensitive"
+                        }
+                    },
+                    {
+                        content: {
+                            contains: search,
+                            mode: "insensitive"
+                        }
+                    },
+                    {
+                        tags: {
+                            has: search
+                        }
                     }
-                },
-                {
-                    content: {
-                        contains: search,
-                        mode: "insensitive"
-                    }
-                },
-                {
-                    tags: {
-                        has: search
-                    }
-                }
-            ]
-                },
+                ]
+            },
         )
     }
-    
-    if(tags.length > 0){
-        andConditions.push( {
-                tags: {
+
+    if (tags.length > 0) {
+        andConditions.push({
+            tags: {
                 hasEvery: tags as string[]
             }
-            })
+        })
+    }
+
+    if (typeof isFeatured === 'boolean') {
+        andConditions.push({
+            isFeatured
+        })
     }
 
     const allPost = await prisma.post.findMany({
